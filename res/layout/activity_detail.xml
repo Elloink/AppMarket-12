@@ -30,9 +30,29 @@
         android:id="@+id/button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignRight="@+id/nameText"
-        android:layout_below="@+id/detailText"
-        android:layout_marginTop="52dp"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentLeft="true"
+        android:layout_marginTop="280dp"
+        android:layout_marginLeft="240dp"
         android:text="下载" />
+
+    <TextView
+        android:id="@+id/textView1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_below="@+id/detailText"
+        android:layout_marginLeft="23dp"
+        android:layout_marginTop="16dp"
+        android:text="Key" />
+
+    <EditText
+        android:id="@+id/keyEditText"
+        android:layout_width="120dp"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_below="@+id/detailText"
+        android:layout_marginLeft="80dp"
+        android:layout_marginTop="16dp" />
 
 </RelativeLayout>

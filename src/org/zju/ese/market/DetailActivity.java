@@ -30,6 +30,7 @@ public class DetailActivity extends Activity {
 	private static final String DL_ID = "downloadId"; 
 	TextView nameText;
 	TextView detailText;
+	EditText keyEditText;
 	Button button;
 	String baseUrl;
 	String file;
@@ -47,11 +48,12 @@ public class DetailActivity extends Activity {
         
         mPerferences = PreferenceManager.getDefaultSharedPreferences(this);
 		key = mPerferences.getString("pref_apps_key", "");
-		keyMd5 = Md5Util.getMd5(key);
+		
 		
         nameText = (TextView)this.findViewById(R.id.nameText);
         detailText = (TextView)this.findViewById(R.id.detailText);
         button = (Button)this.findViewById(R.id.button);
+        keyEditText = (EditText)this.findViewById(R.id.keyEditText);
         
         nameText.setText(bundle.getString("name"));
         detailText.setText(bundle.getString("description"));
@@ -64,6 +66,7 @@ public class DetailActivity extends Activity {
 			public void onClick(View v) {
 				// TODO Auto-generated method stub
 				long time = (new Date()).getTime();
+				keyMd5 = Md5Util.getMd5(keyEditText.getText().toString());
 				String skey = Md5Util.getMd5(keyMd5+time);
 				String surl = baseUrl+ "apps?file=" + file + "&time=" + time + "&key=" + skey;
 				//Intent it = new Intent(Intent.ACTION_VIEW, Uri.parse(surl));  
