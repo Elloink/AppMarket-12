@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+    <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android" android:key="pref_root" android:title="设置">
+        
+        <PreferenceCategory android:title="服务器设置">
+            <EditTextPreference android:key="pref_server_address" android:title="地址" android:defaultValue="10.12.48.89" android:summary="服务器地址"/>
+            <EditTextPreference android:key="pref_server_port" android:defaultValue="8080" android:title="端口" android:summary="服务器端口"/>
+            <EditTextPreference android:key="pref_apps_key" android:defaultValue="zlhzxqxl0604if" android:title="Key" android:summary="下载Key"/>
+        </PreferenceCategory>
+    </PreferenceScreen>
