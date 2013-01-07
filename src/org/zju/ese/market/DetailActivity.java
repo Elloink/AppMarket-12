@@ -80,9 +80,11 @@ public class DetailActivity extends Activity {
 		        request.setAllowedOverRoaming(false); 
 		        //在通知栏中显示 
 		        request.setTitle("Downloading"); 
+		        
 		        long id = dm.enqueue(request); 
 		        //保存id 
 		        mPerferences.edit().putLong(DL_ID, id).commit(); 
+		        
 		        registerReceiver(receiver, 
 		                new IntentFilter(DownloadManager.ACTION_DOWNLOAD_COMPLETE)); 
 			}

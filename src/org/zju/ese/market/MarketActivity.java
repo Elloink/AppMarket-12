@@ -77,6 +77,18 @@ public class MarketActivity extends Activity {
         //setListAdapter(adapter);
     }
     
+    private void refreshData()
+    {
+    	MyThread thread = new MyThread();
+        thread.start();
+        try {
+			thread.join();
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+    }
+    
     private void initPreference()
 	{
 		 SharedPreferences mPerferences = PreferenceManager.getDefaultSharedPreferences(this);
@@ -100,14 +112,6 @@ public class MarketActivity extends Activity {
 		 String address = mPerferences.getString("pref_server_address", "");
 		 String port = mPerferences.getString("pref_server_port", "");
 		 baseUrl = "http://" + address + ":" + port+ "/partime/";
-		 MyThread thread = new MyThread();
-	        thread.start();
-	        try {
-				thread.join();
-			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
     }
     
     @Override
@@ -143,9 +147,13 @@ public class MarketActivity extends Activity {
 			restTemplate.setMessageConverters(messageConverters);
 			// Add the Jackson message converter
 			restTemplate.getMessageConverters().add(new MappingJacksonHttpMessageConverter());
-			
-			appList = restTemplate.getForObject(baseUrl+"/getapps", AppItem[].class);
-
+			try{
+				appList = restTemplate.getForObject(baseUrl+"/getapps", AppItem[].class);
+			}
+			catch(Exception e)
+			{
+				
+			}
 //			Message message = handler.obtainMessage();
 //			message.obj = list[0];
 //			handler.sendMessage(message);
@@ -180,6 +188,9 @@ public class MarketActivity extends Activity {
             	Intent intent = new Intent(this, MarketPreferenceActivity.class);
             	startActivityForResult(intent,RESULT_PREF_UPDATE);
                 return true;
+            case R.id.menu_refresh:
+            	refreshData();
+            	return true;
         }
         return super.onOptionsItemSelected(item);
     }
