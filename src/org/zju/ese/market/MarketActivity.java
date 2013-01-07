@@ -1,5 +1,6 @@
 package org.zju.ese.market;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -13,9 +14,11 @@ import org.springframework.http.converter.json.MappingJacksonHttpMessageConverte
 import org.springframework.web.client.RestTemplate;
 import org.zju.ese.model.AppItem;
 
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.os.RemoteException;
 import android.preference.PreferenceManager;
 import android.app.Activity;
 import android.app.ListActivity;
@@ -30,11 +33,14 @@ import android.widget.ArrayAdapter;
 import android.widget.GridView;
 import android.widget.ListAdapter;
 import android.widget.ListView;
+import android.widget.Toast;
 import android.support.v4.app.NavUtils;
 
 public class MarketActivity extends Activity {
 	public static final int RESULT_PREF_UPDATE = 1;
-	
+	public static final int QUERY_SUCCESS = 1;
+	public static final int QUERY_FAIL = 2;
+	public static final int MSG_QUERY = 1;
 	AppItem[] appList;
 	private GridView gridView;
 	private String baseUrl;
@@ -43,35 +49,13 @@ public class MarketActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_market);
         getActionBar().setDisplayHomeAsUpEnabled(true);
+        gridView = (GridView) findViewById(R.id.gridview); 
         
         initPreference();
         if(baseUrl != null)
         {
 	        MyThread thread = new MyThread();
-	        thread.start();
-	        try {
-				thread.join();
-			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-	        
-	        gridView = (GridView) findViewById(R.id.gridview); 
-	        PictureAdapter adapter = new PictureAdapter(appList, this,baseUrl); 
-	        gridView.setAdapter(adapter); 
-	        gridView.setOnItemClickListener(new OnItemClickListener() 
-	        { 
-	            public void onItemClick(AdapterView<?> parent, View v, int position, long id) 
-	            { 
-	            	AppItem item = appList[position];
-	            	Intent intent1 = new Intent(MarketActivity.this, DetailActivity.class);
-	            	intent1.putExtra("name", item.getName());
-	            	intent1.putExtra("description", item.getDescription());
-	            	intent1.putExtra("file", item.getUrl());
-	            	intent1.putExtra("baseUrl", baseUrl);
-	            	startActivity(intent1);
-	            } 
-	        }); 
+	        thread.start(); 
         }
         //ListAdapter adapter = new ArrayAdapter<AppItem>(this,android.R.layout.simple_list_item_1,appList);
         //setListAdapter(adapter);
@@ -81,12 +65,6 @@ public class MarketActivity extends Activity {
     {
     	MyThread thread = new MyThread();
         thread.start();
-        try {
-			thread.join();
-		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
     }
     
     private void initPreference()
@@ -123,6 +101,42 @@ public class MarketActivity extends Activity {
 	        }
 	 }
     
+    private Handler handler = new Handler()
+	{
+		 @Override
+	     public void handleMessage(Message msg) 
+		 {
+			 String path = (String)msg.obj;
+				switch(msg.what)
+				{
+				case MSG_QUERY:
+					if(msg.arg1 == QUERY_SUCCESS)
+					{
+						PictureAdapter adapter = new PictureAdapter(appList,MarketActivity.this,baseUrl); 
+				        gridView.setAdapter(adapter); 
+				        gridView.setOnItemClickListener(new OnItemClickListener() 
+				        { 
+				            public void onItemClick(AdapterView<?> parent, View v, int position, long id) 
+				            { 
+				            	AppItem item = appList[position];
+				            	Intent intent1 = new Intent(MarketActivity.this, DetailActivity.class);
+				            	intent1.putExtra("name", item.getName());
+				            	intent1.putExtra("description", item.getDescription());
+				            	intent1.putExtra("file", item.getUrl());
+				            	intent1.putExtra("baseUrl", baseUrl);
+				            	startActivity(intent1);
+				            } 
+				        }); 
+					}
+					else
+					{
+						Toast.makeText(MarketActivity.this, "网络读取失败，请检查网络配置或服务器", Toast.LENGTH_LONG).show();
+					}
+					break;
+				}
+		 }
+	}; 
+    
     class MyThread extends Thread
     {
     	//Handler handler;
@@ -147,12 +161,17 @@ public class MarketActivity extends Activity {
 			restTemplate.setMessageConverters(messageConverters);
 			// Add the Jackson message converter
 			restTemplate.getMessageConverters().add(new MappingJacksonHttpMessageConverter());
+			Message message = handler.obtainMessage(MSG_QUERY);
 			try{
 				appList = restTemplate.getForObject(baseUrl+"/getapps", AppItem[].class);
+				message.arg1 = QUERY_SUCCESS;
 			}
 			catch(Exception e)
 			{
-				
+				message.arg1 = QUERY_FAIL;
+			}
+			finally{
+				message.sendToTarget();
 			}
 //			Message message = handler.obtainMessage();
 //			message.obj = list[0];
