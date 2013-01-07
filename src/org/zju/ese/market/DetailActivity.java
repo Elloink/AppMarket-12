@@ -25,6 +25,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 public class DetailActivity extends Activity {
 	private static final String DL_ID = "downloadId"; 
@@ -136,14 +137,20 @@ public class DetailActivity extends Activity {
 //        			fos.close();
 //        			fis.close();
                 	File f = new File(getExternalFilesDir(null).getAbsolutePath()+"/"+file);
-                	
-                    Intent intent = new Intent();   
-                    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);   
-                    intent.setAction(android.content.Intent.ACTION_VIEW); 
-                    //final File fileLocal = new File("/sdcard/download/" + file);  
-                    intent.setDataAndType(Uri.fromFile(f),   
-                                    "application/vnd.android.package-archive");   
-                    startActivity(intent); 
+                	if(f.length() > 0)
+                	{
+	                    Intent intent = new Intent();   
+	                    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);   
+	                    intent.setAction(android.content.Intent.ACTION_VIEW); 
+	                    //final File fileLocal = new File("/sdcard/download/" + file);  
+	                    intent.setDataAndType(Uri.fromFile(f),   
+	                                    "application/vnd.android.package-archive");   
+	                    startActivity(intent); 
+                	}
+                	else
+                	{
+                		Toast.makeText(this, "密匙错误！", Toast.LENGTH_LONG).show();
+                	}
                 } catch (Exception e) { 
                     e.printStackTrace(); 
                 } 
