@@ -80,7 +80,9 @@ public class DetailActivity extends Activity {
 		        request.setAllowedOverRoaming(false); 
 		        //在通知栏中显示 
 		        request.setTitle("Downloading"); 
-		        
+		        File f = new File(getExternalFilesDir(null).getAbsolutePath()+"/"+file);
+		        f.delete();
+		        request.setDestinationInExternalFilesDir(DetailActivity.this, null, file);
 		        long id = dm.enqueue(request); 
 		        //保存id 
 		        mPerferences.edit().putLong(DL_ID, id).commit(); 
@@ -121,19 +123,20 @@ public class DetailActivity extends Activity {
                 try { 
                 	ParcelFileDescriptor fileDescriptor =  
                             dm.openDownloadedFile(mPerferences.getLong(DL_ID, 0)); 
-                        FileInputStream fis =  
-                            new ParcelFileDescriptor.AutoCloseInputStream(fileDescriptor); 
-                    File f = new File("/sdcard/download/"+file);
-                    FileOutputStream fos = new FileOutputStream(f);
-                    
-                    byte[] buff = new byte[2048];
-        			int bytesRead;   
-        			while (-1 != (bytesRead = fis.read(buff, 0, buff.length))) {  
-        				fos.write(buff, 0, bytesRead);   
-        				} 
-        			fos.close();
-        			fis.close();
-                
+//                        FileInputStream fis =  
+//                            new ParcelFileDescriptor.AutoCloseInputStream(fileDescriptor); 
+//                    File f = new File("/sdcard/"+file);
+//                    FileOutputStream fos = new FileOutputStream(f);
+//                    
+//                    byte[] buff = new byte[2048];
+//        			int bytesRead;   
+//        			while (-1 != (bytesRead = fis.read(buff, 0, buff.length))) {  
+//        				fos.write(buff, 0, bytesRead);   
+//        				} 
+//        			fos.close();
+//        			fis.close();
+                	File f = new File(getExternalFilesDir(null).getAbsolutePath()+"/"+file);
+                	
                     Intent intent = new Intent();   
                     intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);   
                     intent.setAction(android.content.Intent.ACTION_VIEW); 
