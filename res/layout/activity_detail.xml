@@ -48,7 +48,7 @@
 
     <EditText
         android:id="@+id/keyEditText"
-        android:layout_width="120dp"
+        android:layout_width="150dp"
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
         android:layout_below="@+id/detailText"

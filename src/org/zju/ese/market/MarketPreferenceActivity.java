@@ -14,13 +14,7 @@ public class MarketPreferenceActivity extends Activity
 	@Override
     public void onCreate(Bundle savedInstanceState) {
 		 super.onCreate(savedInstanceState);
-		 FragmentManager fragmentManager = getFragmentManager();
-         FragmentTransaction fragmentTransaction =
-              fragmentManager.beginTransaction();
-         MarketFragment fragment1 = new MarketFragment();
-         fragmentTransaction.replace(android.R.id.content, fragment1);       
-         fragmentTransaction.addToBackStack(null);
-         fragmentTransaction.commit();
+		 this.setContentView(R.layout.preference_activity);
 	}
 	@Override
 	protected void onStop() {
